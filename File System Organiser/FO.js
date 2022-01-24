@@ -29,7 +29,7 @@ let types = {
 
 switch (command) {
   case "tree":
-    console.log("tree implemented");
+    treeFn(inputArr[1]);
     break;
   case "organize":
     organizeFn(inputArr[1]);
@@ -133,3 +133,35 @@ function sendFiles(srcFilePath,dest,filecategory){
    console.log('Files Organized')
 }
 
+function treeFn(dirPath){
+  if (dirPath == undefined) {
+    console.log("Please enter a valid Directory path");
+    return;
+  }
+  else{
+    let doesExist = fs.existsSync(dirPath)
+    if (doesExist == true) {
+      treeHelper(dirPath,' ');
+  }
+}
+}
+
+ function treeHelper(targetPath,indent){
+ let isFile = fs.lstatSync(targetPath).isFile()
+
+ if(isFile==true){
+   let FileName = path.basename(targetPath)
+   console.log(indent+ "├── "+FileName)
+ }
+ else{
+      let dirName = path.basename(targetPath)
+      console.log(indent + "└── "+dirName)
+
+      let children = fs.readdirSync(targetPath)
+
+      for(let i=0;i<children.length;i++){
+        let childpath = path.join(targetPath,children[i])
+        treeHelper(childpath,indent+'\t')
+      }
+ }
+ }
